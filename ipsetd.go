@@ -1,8 +1,8 @@
 package main
 
 import (
+	"github.com/42wim/ipsetd/ipset"
 	"github.com/firstrow/tcp_server"
-	"uafw/ipset"
 )
 
 func main() {
