@@ -26,6 +26,16 @@ func NewIPset(path string) *IPset {
 	return ipset
 }
 
+func NewIPsetExtra(path string, args ...string) *IPset {
+	args = append(args, "-")
+	cmd := exec.Command(path, args...)
+	f, _ := pty.Start(cmd)
+	ipset := &IPset{pty: f, stdin: bufio.NewWriter(f), stdout: bufio.NewReader(f)}
+	buf := make([]byte, 1000)
+	ipset.stdout.Read(buf)
+	return ipset
+}
+
 // Cmd executes the ipset command and returns the output.
 func (ipset *IPset) Cmd(cmd string) string {
 	ipset.stdin.WriteString(cmd + "\n")
