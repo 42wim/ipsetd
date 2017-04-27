@@ -40,8 +40,13 @@ func NewIPsetExtra(path string, args ...string) *IPset {
 
 // Cmd executes the ipset command and returns the output.
 func (ipset *IPset) Cmd(cmd string) (string, error) {
+	var ack bool
 	if cmd == "\r\n" || cmd == "\n" || cmd == "" {
 		return "", nil
+	}
+	if strings.HasPrefix(cmd, "ACK ") {
+		cmd = strings.Replace(cmd, "ACK ", "", -1)
+		ack = true
 	}
 	cmd = strings.Replace(cmd, "\r\n", "\n", -1)
 	cmd = strings.Replace(cmd, "\n\n", "\n", -1)
@@ -56,6 +61,9 @@ func (ipset *IPset) Cmd(cmd string) (string, error) {
 			res = strings.TrimPrefix(res, cmd)
 			res = strings.Replace(res, "ipset> ", "", -1)
 			res = strings.TrimPrefix(res, "\n")
+			if ack {
+				res += "+OK\n"
+			}
 			return res, nil
 		}
 	case <-time.After(time.Second):
