@@ -30,7 +30,7 @@ func msgHandler(c chan *Message) {
 }
 
 func main() {
-	server := tcp_server.New(":9999")
+	server := tcp_server.New("0.0.0.0:9999")
 	ch := make(chan *Message)
 	go msgHandler(ch)
 
@@ -42,6 +42,10 @@ func main() {
 		c.Close()
 	})
 	server.OnNewMessage(func(c *tcp_server.Client, message string) {
+		if strings.Contains(message, "PING") {
+			c.Send("PONG\n")
+			return
+		}
 		ch <- &Message{Cmd: message, Client: c}
 	})
 	server.Listen()
