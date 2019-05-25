@@ -1,0 +1,4 @@
+# github.com/firstrow/tcp_server v0.0.0-20190424084220-b7a05ff2879d
+github.com/firstrow/tcp_server
+# github.com/kr/pty v1.1.4
+github.com/kr/pty
