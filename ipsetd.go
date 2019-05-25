@@ -25,13 +25,16 @@ func msgHandler(c chan *Message) {
 		if strings.Contains(res, "Internal protocol error") {
 			panic("ipset error, bailing")
 		}
-		msg.Client.Send(res)
+		err = msg.Client.Send(res)
+		if err != nil {
+			fmt.Println("ERR: client.send", err)
+		}
 		fmt.Print(res)
 	}
 }
 
 func main() {
-	server := tcp_server.New("0.0.0.0:9999")
+	server := tcp_server.New(":9999")
 	ch := make(chan *Message)
 	go msgHandler(ch)
 
@@ -44,7 +47,10 @@ func main() {
 	})
 	server.OnNewMessage(func(c *tcp_server.Client, message string) {
 		if strings.Contains(message, "PING") {
-			c.Send("PONG\n")
+			err := c.Send("PONG\n")
+			if err != nil {
+				fmt.Println("ERR: sending pong failed", err)
+			}
 			return
 		}
 		ch <- &Message{Cmd: message, Client: c}

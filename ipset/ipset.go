@@ -25,7 +25,10 @@ func NewIPset(path string) *IPset {
 	f, _ := pty.Start(cmd)
 	ipset := &IPset{pty: f, stdin: bufio.NewWriter(f), stdout: bufio.NewReader(f)}
 	buf := make([]byte, 1000)
-	ipset.stdout.Read(buf)
+	_, err := ipset.stdout.Read(buf)
+	if err != nil {
+		panic(err)
+	}
 	return ipset
 }
 
@@ -35,7 +38,10 @@ func NewIPsetExtra(path string, args ...string) *IPset {
 	f, _ := pty.Start(cmd)
 	ipset := &IPset{pty: f, stdin: bufio.NewWriter(f), stdout: bufio.NewReader(f)}
 	buf := make([]byte, 1000)
-	ipset.stdout.Read(buf)
+	_, err := ipset.stdout.Read(buf)
+	if err != nil {
+		panic(err)
+	}
 	return ipset
 }
 
@@ -52,7 +58,10 @@ func (ipset *IPset) Cmd(cmd string) (string, error) {
 	cmd = strings.Replace(cmd, "\r\n", "\n", -1)
 	cmd = strings.Replace(cmd, "\n\n", "\n", -1)
 	ch := make(chan string)
-	ipset.stdin.WriteString(cmd)
+	_, err := ipset.stdin.WriteString(cmd)
+	if err != nil {
+		panic(err)
+	}
 	ipset.stdin.Flush()
 	go ipset.read(ch)
 	select {
