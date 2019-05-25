@@ -3,12 +3,13 @@ package ipset
 import (
 	"bufio"
 	"errors"
-	"github.com/kr/pty"
 	"os"
 	"os/exec"
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/kr/pty"
 )
 
 // IPset struct
@@ -80,7 +81,7 @@ func (ipset *IPset) read(ch chan string) {
 		loadStr += string(buf[:n])
 		// check the 7 last bytes, should match "ipset> "
 		if len(loadStr) > 7 {
-			if re.MatchString(string(loadStr[len(loadStr)-7:])) {
+			if re.MatchString(loadStr[len(loadStr)-7:]) {
 				break
 			}
 		}

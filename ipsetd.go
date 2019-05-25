@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/42wim/ipsetd/ipset"
 	"github.com/firstrow/tcp_server"
-	"strings"
 )
 
 type Message struct {
