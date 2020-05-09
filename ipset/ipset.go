@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/kr/pty"
+	"github.com/creack/pty"
 )
 
 // IPset struct
@@ -22,6 +22,19 @@ type IPset struct {
 // NewIPset starts ipset specified with path in interactive mode (ipset - ) and returns a new IPset.
 func NewIPset(path string) *IPset {
 	cmd := exec.Command(path, "-")
+	f, _ := pty.Start(cmd)
+	ipset := &IPset{pty: f, stdin: bufio.NewWriter(f), stdout: bufio.NewReader(f)}
+	buf := make([]byte, 1000)
+	_, err := ipset.stdout.Read(buf)
+	if err != nil {
+		panic(err)
+	}
+	return ipset
+}
+
+// NewWithIgnore starts ipset specified with path in interactive mode (ipset -! - ) with ignore errors and returns a new IPset.
+func NewWithIgnore(path string) *IPset {
+	cmd := exec.Command(path, "-!", "-")
 	f, _ := pty.Start(cmd)
 	ipset := &IPset{pty: f, stdin: bufio.NewWriter(f), stdout: bufio.NewReader(f)}
 	buf := make([]byte, 1000)
